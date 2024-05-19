@@ -1,0 +1,12 @@
+## Interface: 30300
+## Version: 1.0.0
+## Title: LN Raid Helper
+## Notes: Simple BQL helper addond
+## Author: LN Dev X
+## RequiredDeps: DBM-Core
+## SavedVariables: LNRaidHelperDB
+## X-License: All Rights Reserved
+## X-Website: https://github.com/lndevx/LNRaidHelper
+
+InternalFunctions.lua
+Main.lua
