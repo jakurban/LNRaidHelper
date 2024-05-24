@@ -309,7 +309,7 @@ function LN_RaidHelper_Sheduler:startBQL(maxPlayers, delay)
         }
     else
         biteTimes = {
-            92, 152, 214, 276
+            92, 167, 244, 319
         }
     end
     local bitesTimerDuration = 20
