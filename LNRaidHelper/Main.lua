@@ -201,7 +201,7 @@ local function LN_RH_characters_names()
 end
 local function LN_RH_linksTimings(isTwentyFiveMode)
     local linksTimes = {}
-    if maxPlayers == 25 then
+    if isTwentyFiveMode then
         linksTimes = {
             15,
             45,
@@ -220,14 +220,14 @@ local function LN_RH_linksTimings(isTwentyFiveMode)
             15,
             45,
             75,
-            105,
+            106,
             135, --whirl
-            160,
-            190,
-            220,
-            255, --whirl
+            153,
+            183,
+            213,
+            244, -- ok
+            258, --whirl
             275,
-            295,
         }
     end
     return linksTimes
