@@ -10,13 +10,15 @@ local function RH_createDropdown1(opts)
     local title_text = opts['title'] or ''
     local dropdown_width = 0
     local default_val = opts['defaultVal'] or ''
-    local change_func = opts['changeFunc'] or function (dropdown_val) end
+    local change_func = opts['changeFunc'] or function(dropdown_val)
+    end
     local dropdown = opts['frame'] or CreateFrame("Frame", dropdown_name, opts['parent'], 'UIDropDownMenuTemplate')
 
     local dd_title = dropdown:CreateFontString(dropdown, 'OVERLAY', 'GameFontNormal')
     dd_title:SetPoint("TOPLEFT", 20, 10)
 
-    for _, item in pairs(menu_items) do -- Sets the dropdown width to the largest item string width.
+    for _, item in pairs(menu_items) do
+        -- Sets the dropdown width to the largest item string width.
         if type(item) == 'table' then
             dd_title:SetText(item.title)
         else
@@ -41,7 +43,7 @@ local function RH_createDropdown1(opts)
                 info.text = val;
             end
             info.checked = false
-            info.menuList= key
+            info.menuList = key
             info.hasArrow = false
             info.func = function(b)
                 UIDropDownMenu_SetSelectedValue(dropdown, b.value, b.value)
@@ -79,13 +81,14 @@ function RH_updateDropdown(dropdown, menu_items, width, change_func)
         local dd_title = nil
         if dropdown.tmp_title then
             dd_title = dropdown.tmp_title
-        else 
+        else
             dd_title = dropdown:CreateFontString(dropdown, 'OVERLAY', 'GameFontNormal')
             dd_title:Hide()
             dropdown.tmp_title = dd_title
         end
 
-        for _, item in pairs(menu_items) do -- Sets the dropdown width to the largest item string width.
+        for _, item in pairs(menu_items) do
+            -- Sets the dropdown width to the largest item string width.
             if type(item) == 'table' then
                 dd_title:SetText(item.title)
             else
@@ -112,7 +115,7 @@ function RH_updateDropdown(dropdown, menu_items, width, change_func)
                 info.text = val;
             end
             info.checked = false
-            info.menuList= key
+            info.menuList = key
             info.hasArrow = false
             info.func = function(b)
                 UIDropDownMenu_SetSelectedValue(dropdown, b.value, b.value)
@@ -137,7 +140,7 @@ local function LN_RH_deep_copy(tb)
 end
 
 local function LN_RH_emptyChar()
-    return {name='', class='Priest'}
+    return { name = '', class = 'Priest' }
 end
 
 local function LN_RH_colorizeName(char)
@@ -153,10 +156,10 @@ local function LN_RH_colorizeName(char)
         ['Warlock'] = '8788EE',
         ['Warrior'] = 'C69B6D',
     }
-    return '|cAA'..colors[char.class]..char.name..'|r'
+    return '|cAA' .. colors[char.class] .. char.name .. '|r'
 end
 local function LN_RH_characters()
-    function IsInRaid() 
+    function IsInRaid()
         return GetNumRaidMembers() > 0
     end
 
@@ -165,7 +168,7 @@ local function LN_RH_characters()
     end
 
     function GetNumGroupMembers1()
-        if IsInRaid() then 
+        if IsInRaid() then
             return GetNumRaidMembers()
         else
             return GetNumPartyMembers()
@@ -179,7 +182,7 @@ local function LN_RH_characters()
             if subgroups[subgroup] == nil then
                 subgroups[subgroup] = {}
             end
-            subgroups[subgroup][#subgroups[subgroup] + 1] = {name=name, ['class'] = cls}
+            subgroups[subgroup][#subgroups[subgroup] + 1] = { name = name, ['class'] = cls }
         end
     end
     local i = 1
@@ -237,9 +240,9 @@ LN_RaidHelper_Sheduler = {}
 function LN_RaidHelper_Sheduler:initialize()
     self.isRunning = -1
     self.eventList = {}
-    self.frame = CreateFrame("Frame","WaitFrame", UIParent)
+    self.frame = CreateFrame("Frame", "WaitFrame", UIParent)
     self.frame:Hide()
-    self.frame:SetScript("onUpdate", function (self, elapse)
+    self.frame:SetScript("onUpdate", function(self, elapse)
         LN_RaidHelper_Sheduler:handleUpdate(elapse)
     end);
 end
@@ -253,7 +256,7 @@ function LN_RaidHelper_Sheduler:handleUpdate(elapse)
         local event = self.eventList[self.isRunning]
         self.isRunning = self.isRunning + 1
         if event.eventType == 'timer' then
-            local cmd = 'broadcast timer '..event.duration..' '..event.msg
+            local cmd = 'broadcast timer ' .. event.duration .. ' ' .. event.msg
             SlashCmdList['DEADLYBOSSMODS'](cmd)
         end
     end
@@ -314,27 +317,29 @@ function LN_RaidHelper_Sheduler:startBQL(maxPlayers, delay)
     end
     local bitesTimerDuration = 20
     for b, t in pairs(biteTimes) do
-        if b == #biteTimes then break end
-        for j=1,2^(b - 1) do
-            local b1 = LNRaidHelperDB.bites[j].name == '' and ('char'..j) or LNRaidHelperDB.bites[j].name
-            local j2 = j + 2^(b - 1)
-            local b2 = LNRaidHelperDB.bites[j2].name == '' and ('char'..j2) or LNRaidHelperDB.bites[j2].name
-            bites[#bites + 1] = {time=t,eventType='timer', msg = b1..' -> '..b2, duration = bitesTimerDuration}
+        if b == #biteTimes then
+            break
+        end
+        for j = 1, 2 ^ (b - 1) do
+            local b1 = LNRaidHelperDB.bites[j].name == '' and ('char' .. j) or LNRaidHelperDB.bites[j].name
+            local j2 = j + 2 ^ (b - 1)
+            local b2 = LNRaidHelperDB.bites[j2].name == '' and ('char' .. j2) or LNRaidHelperDB.bites[j2].name
+            bites[#bites + 1] = { time = t, eventType = 'timer', msg = b1 .. ' -> ' .. b2, duration = bitesTimerDuration }
         end
     end
     if maxPlayers == 25 then
-        for j=1,4 do
-            local b1 = LNRaidHelperDB.bites[j].name == '' and ('char'..j) or LNRaidHelperDB.bites[j].name
+        for j = 1, 4 do
+            local b1 = LNRaidHelperDB.bites[j].name == '' and ('char' .. j) or LNRaidHelperDB.bites[j].name
             local j2 = j + 8
-            local b2 = LNRaidHelperDB.bites[j2].name == '' and ('char'..j2) or LNRaidHelperDB.bites[j2].name
+            local b2 = LNRaidHelperDB.bites[j2].name == '' and ('char' .. j2) or LNRaidHelperDB.bites[j2].name
             local j3 = j + 4
-            local b3 = LNRaidHelperDB.bites[j3].name == '' and ('char'..j3) or LNRaidHelperDB.bites[j3].name
+            local b3 = LNRaidHelperDB.bites[j3].name == '' and ('char' .. j3) or LNRaidHelperDB.bites[j3].name
             local j4 = j3 + 8
-            local b4 = LNRaidHelperDB.bites[j4].name == '' and ('char'..j4) or LNRaidHelperDB.bites[j4].name
+            local b4 = LNRaidHelperDB.bites[j4].name == '' and ('char' .. j4) or LNRaidHelperDB.bites[j4].name
 
-            bites[#bites + 1] = {time=biteTimes[#biteTimes], eventType='timer',
-                msg = string.sub(b1, 1, 5)..' > '..string.sub(b2, 1, 5)..' // '..string.sub(b3, 1, 5)..' > '..string.sub(b4, 1, 5),
-                duration = bitesTimerDuration
+            bites[#bites + 1] = { time = biteTimes[#biteTimes], eventType = 'timer',
+                                  msg = string.sub(b1, 1, 5) .. ' > ' .. string.sub(b2, 1, 5) .. ' // ' .. string.sub(b3, 1, 5) .. ' > ' .. string.sub(b4, 1, 5),
+                                  duration = bitesTimerDuration
             }
         end
     end
@@ -355,16 +360,16 @@ function LN_RaidHelper_Sheduler:startBQL(maxPlayers, delay)
             if am.name == ds.name then
                 msg = msg .. ' + DiSac'
             else
-                msg2 = ds.name..' DiSac'
+                msg2 = ds.name .. ' DiSac'
             end
         end
         if msg ~= '' then
-            msg = msg..' ('..i..')'
-            links[#links + 1] = {time=t,eventType='timer',msg=msg,duration=linksTimerDuration}
+            msg = msg .. ' (' .. i .. ')'
+            links[#links + 1] = { time = t, eventType = 'timer', msg = msg, duration = linksTimerDuration }
         end
         if msg2 ~= '' then
-            msg2 = msg2..' ('..i..')'
-            links[#links + 1] = {time=t,eventType='timer',msg=msg2,duration=linksTimerDuration}
+            msg2 = msg2 .. ' (' .. i .. ')'
+            links[#links + 1] = { time = t, eventType = 'timer', msg = msg2, duration = linksTimerDuration }
         end
     end
     LN_RaidHelper_Sheduler:shift_time(links, -linksTimerDuration)
@@ -382,7 +387,7 @@ function LN_RaidHelper:initialize(parent)
     LN_RaidHelper_Sheduler:initialize()
     self.state = {
         configKey = 'BQL',
-        isEnabled=false,
+        isEnabled = false,
         isFighting = false,
         bql = {
             bites = {},
@@ -415,7 +420,9 @@ function LN_RaidHelper:initialize(parent)
     self.ui.isEnabled:SetSize(30, 30) -- width, height
     self.ui.isEnabled:SetText("Is Enabled")
     self.ui.isEnabled.tooltip = "DBM Timers Enabled"
-    self.ui.isEnabled:SetScript("OnClick", function () LN_RaidHelper:handle({id='isEnabledToggle'}) end)
+    self.ui.isEnabled:SetScript("OnClick", function()
+        LN_RaidHelper:handle({ id = 'isEnabledToggle' })
+    end)
     self.ui.isEnabled:SetPoint("TOPLEFT", 16, -10)
 
     local title = parent:CreateFontString("LNRaidHelperConfigTitle", "ARTWORK", "GameFontNormalLarge")
@@ -435,12 +442,12 @@ function LN_RaidHelper:initialize(parent)
     local version = parent:CreateFontString("LNRaidHelperVersion", "ARTWORK", "NumberFontNormalSmallGray")
     version:SetPoint("TOPLEFT", 50, -36)
     version:SetText("v1.0.0")
-    
+
     local configDropdown = RH_createDropdown(parent, 'LNRaidHelperConfigDropdown', 'Config', 'BQL', 0, -16, 'TOPRIGHT')
     self.ui.configDropdown = configDropdown
     self.ui.updates.configDropdown = function(state)
-        RH_updateDropdown(configDropdown, {'BQL', 'Import/Export'}, nil, function(dd, value)
-            LN_RaidHelper:handle({id='configChange', value=value})
+        RH_updateDropdown(configDropdown, { 'BQL', 'Import/Export', }, nil, function(dd, value)
+            LN_RaidHelper:handle({ id = 'configChange', value = value })
         end)
     end
 
@@ -459,7 +466,7 @@ function LN_RaidHelper:initialize(parent)
     importButton:SetText("Import Bites")
     importButton:SetPoint("TOPLEFT", 16, -52 - 15 + 5)
     importButton:SetScript("OnClick", function()
-        LN_RaidHelper:handle({id='import', value=importField:GetText()})
+        LN_RaidHelper:handle({ id = 'import', value = importField:GetText() })
     end)
     importButton:Hide()
 
@@ -478,7 +485,7 @@ function LN_RaidHelper:initialize(parent)
     exportButton:SetText("Export Players")
     exportButton:SetPoint("TOPLEFT", 16, -52 - 15 + 5 - 40 * 2)
     exportButton:SetScript("OnClick", function()
-        LN_RaidHelper:handle({id='export', value=exportField:GetText()})
+        LN_RaidHelper:handle({ id = 'export', value = exportField:GetText() })
     end)
     exportButton:Hide()
 
@@ -486,12 +493,12 @@ function LN_RaidHelper:initialize(parent)
     for k, v in pairs(LNRaidHelperDB.bites) do
         local x = 16 + (k > 8 and 120 or 0)
         local y = -52 - 15 - 40 * ((k - 1) % 8)
-        local raidDD = RH_createDropdown(parent, 'LNRaidHelperBiteDropdown'..k, 'Bite'..k, LN_RH_colorizeName(v), x, y)
+        local raidDD = RH_createDropdown(parent, 'LNRaidHelperBiteDropdown' .. k, 'Bite' .. k, LN_RH_colorizeName(v), x, y)
         self.state.bql.bites[k] = v
         self.ui.bql.dropdowns.bites[k] = raidDD
         self.ui.bql.updates.bites[k] = function(state)
             RH_updateDropdown(raidDD, state.charsNames, dropdownWidth, function(dd, value)
-                LN_RaidHelper:handle({id='bite', bite=k, value=value})
+                LN_RaidHelper:handle({ id = 'bite', bite = k, value = value })
             end)
         end
     end
@@ -499,19 +506,19 @@ function LN_RaidHelper:initialize(parent)
         local x1 = 16 + 240
         local x2 = x1 + 120
         local y = -52 - 15 - 40 * (l - 1)
-        local raidDD1 = RH_createDropdown(parent, 'LNRaidHelperLinkAMDropdown'..l, 'Aura Mastery '..l, LN_RH_colorizeName(cs.am), x1, y)
-        local raidDD2 = RH_createDropdown(parent, 'LNRaidHelperLinkDSDropdown'..l, 'DiSac '..l, LN_RH_colorizeName(cs.ds), x2, y)
-        self.state.bql.links[l] = {am=cs.am, ds = cs.ds}
-        self.ui.bql.dropdowns.links[l] = {am=raidDD1, ds=raidDD2}
+        local raidDD1 = RH_createDropdown(parent, 'LNRaidHelperLinkAMDropdown' .. l, 'Aura Mastery ' .. l, LN_RH_colorizeName(cs.am), x1, y)
+        local raidDD2 = RH_createDropdown(parent, 'LNRaidHelperLinkDSDropdown' .. l, 'DiSac ' .. l, LN_RH_colorizeName(cs.ds), x2, y)
+        self.state.bql.links[l] = { am = cs.am, ds = cs.ds }
+        self.ui.bql.dropdowns.links[l] = { am = raidDD1, ds = raidDD2 }
         self.ui.bql.updates.links[l] = {
-            am=function(state)
+            am = function(state)
                 RH_updateDropdown(raidDD1, state.charsNames, dropdownWidth, function(dd, value)
-                    LN_RaidHelper:handle({id='link', link=l, defType='am', value=value})
+                    LN_RaidHelper:handle({ id = 'link', link = l, defType = 'am', value = value })
                 end)
             end,
-            ds=function(state)
+            ds = function(state)
                 RH_updateDropdown(raidDD2, state.charsNames, dropdownWidth, function(dd, value)
-                    LN_RaidHelper:handle({id='link', link=l, defType='ds', value=value})
+                    LN_RaidHelper:handle({ id = 'link', link = l, defType = 'ds', value = value })
                 end)
             end
         }
@@ -519,7 +526,7 @@ function LN_RaidHelper:initialize(parent)
 
     do
         local b = CreateFrame("Button", "LNRaidHelperDEBUGPull", parent, "UIPanelButtonTemplate")
-        b:SetSize(80 ,22)
+        b:SetSize(80, 22)
         b:SetPoint("CENTER")
         b:SetPoint("TOPRIGHT", -200, -10)
         b:Hide()
@@ -533,9 +540,9 @@ function LN_RaidHelper:initialize(parent)
             end
             b:SetScript("OnClick", function()
                 if state.isFighting then
-                    LN_RaidHelper:handle({id='kill'})
+                    LN_RaidHelper:handle({ id = 'kill' })
                 else
-                    LN_RaidHelper:handle({id='pull',boss='Lanathel',maxPlayers=25,delay=-5})
+                    LN_RaidHelper:handle({ id = 'pull', boss = 'Lanathel', maxPlayers = 25, delay = -5 })
                 end
             end)
             b:SetText(state.isFighting and "Kill" or "Pull")
@@ -544,21 +551,21 @@ function LN_RaidHelper:initialize(parent)
 
     DBM:RegisterCallback('DBM_Pull', function(event, mod, delay)
         local _, _, _, maxPlayers = DBM:GetCurrentInstanceDifficulty()
-        LN_RaidHelper:handle({id='pull', boss=mod.id, maxPlayers=maxPlayers,delay=(delay or 0)})
+        LN_RaidHelper:handle({ id = 'pull', boss = mod.id, maxPlayers = maxPlayers, delay = (delay or 0) })
     end)
     DBM:RegisterCallback('DBM_Wipe', function(event)
-        LN_RaidHelper:handle({id='kill'})
+        LN_RaidHelper:handle({ id = 'kill' })
     end)
     DBM:RegisterCallback('DBM_Kill', function(event)
-        LN_RaidHelper:handle({id='kill'})
+        LN_RaidHelper:handle({ id = 'kill' })
     end)
 
-    LN_RaidHelper:feedback({}, {id='init'}, self.state)
+    LN_RaidHelper:feedback({}, { id = 'init' }, self.state)
 end
 
 function LN_RaidHelper:reduce(state, event, nextState)
     function setUniqueChar(count, index, name, getChar, setChar)
-        for b=1,count do
+        for b = 1, count do
             local c = getChar(b)
             if b ~= index and LN_RH_colorizeName(c) == name then
                 setChar(b, LN_RH_emptyChar())
@@ -577,13 +584,21 @@ function LN_RaidHelper:reduce(state, event, nextState)
     if event.id == 'bite' then
         nextState.isEnabled = true
         setUniqueChar(#state.bql.bites, event.bite, event.value,
-            function(i) return state.bql.bites[i] end,
-            function(i, c) nextState.bql.bites[i] = c end)
+                function(i)
+                    return state.bql.bites[i]
+                end,
+                function(i, c)
+                    nextState.bql.bites[i] = c
+                end)
     elseif event.id == 'link' then
         nextState.isEnabled = true
         setUniqueChar(#state.bql.links, event.link, event.value,
-            function(i) return state.bql.links[i][event.defType] end,
-            function(i, c) nextState.bql.links[i][event.defType] = c end)
+                function(i)
+                    return state.bql.links[i][event.defType]
+                end,
+                function(i, c)
+                    nextState.bql.links[i][event.defType] = c
+                end)
     elseif event.id == 'reload' then
         nextState.charsInfo = LN_RH_characters()
         nextState.charsNames = LN_RH_characters_names()
@@ -630,7 +645,7 @@ end
 
 function LN_RaidHelper:feedback(prevState, event, state)
     function updateDropdowns(count, index, getChar, getDropdown, updateGlobal)
-        for b=1,count do
+        for b = 1, count do
             local c = getChar(state, b)
             if c.name ~= getChar(prevState, b).name then
                 if b ~= index or c.name == '' then
@@ -658,32 +673,62 @@ function LN_RaidHelper:feedback(prevState, event, state)
         self.ui.updates.title(state)
         for j, _ in pairs(state.bql.bites) do
             updateDropdowns(#state.bql.bites, j,
-                function(s, i) return s.bql.bites[i] end,
-                function(i) return self.ui.bql.dropdowns.bites[i] end,
-                function(i, c) LNRaidHelperDB.bites[i] = c end)
+                    function(s, i)
+                        return s.bql.bites[i]
+                    end,
+                    function(i)
+                        return self.ui.bql.dropdowns.bites[i]
+                    end,
+                    function(i, c)
+                        LNRaidHelperDB.bites[i] = c
+                    end)
         end
         for j, _ in pairs(state.bql.links) do
             updateDropdowns(#state.bql.links, j,
-                function(s, i) return s.bql.links[i].am end,
-                function(i) return self.ui.bql.dropdowns.links[i].am end,
-                function(i, c) LNRaidHelperDB.links[i].am = c end)
+                    function(s, i)
+                        return s.bql.links[i].am
+                    end,
+                    function(i)
+                        return self.ui.bql.dropdowns.links[i].am
+                    end,
+                    function(i, c)
+                        LNRaidHelperDB.links[i].am = c
+                    end)
             updateDropdowns(#state.bql.links, j,
-                function(s, i) return s.bql.links[i].ds end,
-                function(i) return self.ui.bql.dropdowns.links[i].ds end,
-                function(i, c) LNRaidHelperDB.links[i].ds = c end)
+                    function(s, i)
+                        return s.bql.links[i].ds
+                    end,
+                    function(i)
+                        return self.ui.bql.dropdowns.links[i].ds
+                    end,
+                    function(i, c)
+                        LNRaidHelperDB.links[i].ds = c
+                    end)
         end
     elseif event.id == 'bite' then
         self.ui.updates.title(state)
         updateDropdowns(#state.bql.bites, event.bite,
-            function(s, i) return s.bql.bites[i] end,
-            function(i) return self.ui.bql.dropdowns.bites[i] end,
-            function(i, c) LNRaidHelperDB.bites[i] = c end)
+                function(s, i)
+                    return s.bql.bites[i]
+                end,
+                function(i)
+                    return self.ui.bql.dropdowns.bites[i]
+                end,
+                function(i, c)
+                    LNRaidHelperDB.bites[i] = c
+                end)
     elseif event.id == 'link' then
         self.ui.updates.title(state)
         updateDropdowns(#state.bql.links, event.link,
-            function(s, i) return s.bql.links[i][event.defType] end,
-            function(i) return self.ui.bql.dropdowns.links[i][event.defType] end,
-            function(i, c) LNRaidHelperDB.links[i][event.defType] = c end)
+                function(s, i)
+                    return s.bql.links[i][event.defType]
+                end,
+                function(i)
+                    return self.ui.bql.dropdowns.links[i][event.defType]
+                end,
+                function(i, c)
+                    LNRaidHelperDB.links[i][event.defType] = c
+                end)
     elseif event.id == 'isEnabledToggle' then
         if not state.isEnabled then
             LN_RaidHelper_Sheduler:stop()
@@ -693,7 +738,7 @@ function LN_RaidHelper:feedback(prevState, event, state)
         if state.isEnabled then
             if event.boss == 'Lanathel' then
                 if event.delay < 0 and state.debug then
-                    SlashCmdList["DEADLYBOSSMODS"]('timer '..(-event.delay)..' Pull')
+                    SlashCmdList["DEADLYBOSSMODS"]('timer ' .. (-event.delay) .. ' Pull')
                 end
                 LN_RaidHelper_Sheduler:startBQL(event.maxPlayers, event.delay)
             end
@@ -767,11 +812,11 @@ function setup_raid_helper()
             SlashCmdList['DEADLYBOSSMODS'](msg)
         end
         function timer(t, msg)
-            dbm(cmd..' '..t..' '..msg)
+            dbm(cmd .. ' ' .. t .. ' ' .. msg)
         end
         function reverse(tb)
             local result = {}
-            for i=1,#tb do
+            for i = 1, #tb do
                 result[#tb - i + 1] = tb[i]
             end
             return result
@@ -780,13 +825,13 @@ function setup_raid_helper()
             77, 137, 199, 261
         }
         for b, t in pairs(biteTimes) do
-            for j=1,2^(b - 1) do
+            for j = 1, 2 ^ (b - 1) do
                 local b1 = LNRaidHelperDB.bites[j].name == '' and 'UNKNOWN' or LNRaidHelperDB.bites[j].name
-                local b2 = LNRaidHelperDB.bites[j + 2^(b - 1)].name == '' and 'UNKNOWN' or LNRaidHelperDB.bites[j + 2^(b - 1)].name
+                local b2 = LNRaidHelperDB.bites[j + 2 ^ (b - 1)].name == '' and 'UNKNOWN' or LNRaidHelperDB.bites[j + 2 ^ (b - 1)].name
                 if LNRaidHelperDB.debug then
-                    print(t, LNRaidHelperDB.bites[j].name, LNRaidHelperDB.bites[j + 2^(b - 1)].name, j, j + 2^(b - 1))
+                    print(t, LNRaidHelperDB.bites[j].name, LNRaidHelperDB.bites[j + 2 ^ (b - 1)].name, j, j + 2 ^ (b - 1))
                 end
-                timer(t + pullTimer, b1..' -> '..b2)
+                timer(t + pullTimer, b1 .. ' -> ' .. b2)
             end
         end
 
@@ -804,18 +849,18 @@ function setup_raid_helper()
                 if am.name == ds.name then
                     msg = msg .. ' + DiSac'
                 else
-                    msg2 = ds.name..' DiSac'
+                    msg2 = ds.name .. ' DiSac'
                 end
             end
             if msg ~= '' then
-                msg = msg..' ('..i..')'
+                msg = msg .. ' (' .. i .. ')'
                 if LNRaidHelperDB.debug then
                     print(t, msg)
                 end
                 timer(t + pullTimer, msg)
             end
             if msg2 ~= '' then
-                msg2 = msg2..' ('..i..')'
+                msg2 = msg2 .. ' (' .. i .. ')'
                 if LNRaidHelperDB.debug then
                     print(t, msg2)
                 end
@@ -830,9 +875,9 @@ function setup_raid_helper()
     local linksDropdowns = {}
     function handleCommand(cmd)
         if cmd == "debug" then
-            LN_RaidHelper:handle({id='debug'})
+            LN_RaidHelper:handle({ id = 'debug' })
         else
-            LN_RaidHelper:handle({id='reload'})
+            LN_RaidHelper:handle({ id = 'reload' })
             InterfaceOptionsFrame_OpenToCategory("LN Raid Helper")
         end
     end
@@ -850,85 +895,85 @@ function setup_raid_helper()
 end
 
 do
-local frame = CreateFrame("FRAME")   -- Need a frame to respond to events
-frame:RegisterEvent("ADDON_LOADED")  -- Fired when saved variables are loaded
-frame:RegisterEvent("PLAYER_LOGOUT") -- Fired when about to log out
+    local frame = CreateFrame("FRAME")   -- Need a frame to respond to events
+    frame:RegisterEvent("ADDON_LOADED")  -- Fired when saved variables are loaded
+    frame:RegisterEvent("PLAYER_LOGOUT") -- Fired when about to log out
 
-function frame:OnEvent(event, arg1)
-    if event == "ADDON_LOADED" and arg1 == "LNRaidHelper" then 
-        if LNRaidHelperDB == nil then
-            LNRaidHelperDB = {}
-        end
-        function checkChar(tb)
-            if type(tb) ~= 'table' then
-                return false
+    function frame:OnEvent(event, arg1)
+        if event == "ADDON_LOADED" and arg1 == "LNRaidHelper" then
+            if LNRaidHelperDB == nil then
+                LNRaidHelperDB = {}
             end
-            if tb.name == nil then
-                return false
-            end
-            if tb.class == nil then
-                return false
-            end
-            return true
-        end
-        function checkChars(tb)
-            if type(tb) ~= 'table' then
-                return false
-            end
-            for _, v in pairs(tb) do
-                if not checkChar(v) then
+            function checkChar(tb)
+                if type(tb) ~= 'table' then
                     return false
                 end
-            end
-            return true
-        end
-        function checkCharsLink(tb)
-            if type(tb) ~= 'table' then
-                return false
-            end
-            for _, v in pairs(tb) do
-                if (not checkChar(v.am)) or (not checkChar(v.ds)) then
+                if tb.name == nil then
                     return false
                 end
+                if tb.class == nil then
+                    return false
+                end
+                return true
             end
-            return true
-        end
-        if LNRaidHelperDB.bites == nil or (not checkChars(LNRaidHelperDB.bites)) then
-            LNRaidHelperDB.bites = {
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-                {name='', class='Priest'},
-            }
-        end
-        if LNRaidHelperDB.links == nil or (not checkCharsLink(LNRaidHelperDB.links)) then
-            LNRaidHelperDB.links = {
-                {am={name='', class='Priest'},ds={name='', class='Priest'}},
-                {am={name='', class='Priest'},ds={name='', class='Priest'}},
-                {am={name='', class='Priest'},ds={name='', class='Priest'}},
-                {am={name='', class='Priest'},ds={name='', class='Priest'}},
-                {am={name='', class='Priest'},ds={name='', class='Priest'}},
-            }
-        end
-        -- if LNRaidHelperDB.debug == nil then
+            function checkChars(tb)
+                if type(tb) ~= 'table' then
+                    return false
+                end
+                for _, v in pairs(tb) do
+                    if not checkChar(v) then
+                        return false
+                    end
+                end
+                return true
+            end
+            function checkCharsLink(tb)
+                if type(tb) ~= 'table' then
+                    return false
+                end
+                for _, v in pairs(tb) do
+                    if (not checkChar(v.am)) or (not checkChar(v.ds)) then
+                        return false
+                    end
+                end
+                return true
+            end
+            if LNRaidHelperDB.bites == nil or (not checkChars(LNRaidHelperDB.bites)) then
+                LNRaidHelperDB.bites = {
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                    { name = '', class = 'Priest' },
+                }
+            end
+            if LNRaidHelperDB.links == nil or (not checkCharsLink(LNRaidHelperDB.links)) then
+                LNRaidHelperDB.links = {
+                    { am = { name = '', class = 'Priest' }, ds = { name = '', class = 'Priest' } },
+                    { am = { name = '', class = 'Priest' }, ds = { name = '', class = 'Priest' } },
+                    { am = { name = '', class = 'Priest' }, ds = { name = '', class = 'Priest' } },
+                    { am = { name = '', class = 'Priest' }, ds = { name = '', class = 'Priest' } },
+                    { am = { name = '', class = 'Priest' }, ds = { name = '', class = 'Priest' } },
+                }
+            end
+            -- if LNRaidHelperDB.debug == nil then
             LNRaidHelperDB.debug = nil
-        -- end
-        setup_raid_helper()
-    elseif event == "PLAYER_LOGOUT" then
+            -- end
+            setup_raid_helper()
+        elseif event == "PLAYER_LOGOUT" then
 
+        end
     end
-end
-frame:SetScript("OnEvent", frame.OnEvent);
+    frame:SetScript("OnEvent", frame.OnEvent);
 end
